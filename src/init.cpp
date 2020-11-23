@@ -128,7 +128,7 @@ bool ShutdownRequested()
 /**
  * This is a minimally invasive approach to shutdown on LevelDB read errors from the
  * chainstate, while keeping user interface out of the common library, which is shared
- * between obliviond, and oblivion-qt and non-server tools.
+ * between curvehashd, and curvehash-qt and non-server tools.
 */
 class CCoinsViewErrorCatcher final : public CCoinsViewBacked
 {
@@ -179,7 +179,7 @@ void Shutdown()
     /// for example if the data directory was found to be locked.
     /// Be sure that anything that writes files or flushes caches only does this if the respective
     /// module was initialized.
-    RenameThread("oblivion-shutoff");
+    RenameThread("curvehash-shutoff");
     mempool.AddTransactionsUpdated(1);
 
     StopHTTPRPC();
@@ -187,7 +187,7 @@ void Shutdown()
     StopRPC();
     StopHTTPServer();
 #ifdef ENABLE_WALLET
-    GenerateOblivion(false, 0, Params());
+    GenerateCurvehash(false, 0, Params());
     FlushWallets();
 #endif
     MapPort(false);
@@ -503,8 +503,8 @@ std::string HelpMessage(HelpMessageMode mode)
 
 std::string LicenseInfo()
 {
-    const std::string URL_SOURCE_CODE = "<https://github.com/oblivioncoin/oblivion>";
-    const std::string URL_WEBSITE = "<https://oblivion.net/>";
+    const std::string URL_SOURCE_CODE = "<https://github.com/curvehashcoin/curvehash>";
+    const std::string URL_WEBSITE = "<https://curvehash.net/>";
 
     return CopyrightHolders(strprintf(_("Copyright (C) %i-%i"), 2012, COPYRIGHT_YEAR) + " ") + "\n" +
            "\n" +
@@ -566,7 +566,7 @@ struct CImportingNow
 void ThreadImport(std::vector<fs::path> vImportFiles)
 {
     const CChainParams& chainparams = Params();
-    RenameThread("oblivion-loadblk");
+    RenameThread("curvehash-loadblk");
 
     {
     CImportingNow imp;
@@ -638,7 +638,7 @@ void ThreadImport(std::vector<fs::path> vImportFiles)
 }
 
 /** Sanity checks
- *  Ensure that Oblivion is running in a usable environment with all
+ *  Ensure that Curvehash is running in a usable environment with all
  *  necessary library support.
  */
 bool InitSanityCheck(void)
@@ -999,7 +999,7 @@ bool AppInitParameterInteraction()
 
 static bool LockDataDirectory(bool probeOnly)
 {
-    // Make sure only a single Oblivion process is using the data directory.
+    // Make sure only a single Curvehash process is using the data directory.
     fs::path datadir = GetDataDir();
     if (!LockDirectory(datadir, ".lock", probeOnly)) {
         return InitError(strprintf(_("Cannot obtain a lock on data directory %s. %s is probably already running."), datadir.string(), _(PACKAGE_NAME)));
@@ -1018,12 +1018,12 @@ bool AppInitSanityChecks()
     ECC_Start();
     globalVerifyHandle.reset(new ECCVerifyHandle());
 
-    // oblivion: init hash seed
-    oblivionRandseed = GetRand(1 << 30);
+    // curvehash: init hash seed
+    curvehashRandseed = GetRand(1 << 30);
 
 #ifdef ENABLE_CHECKPOINTS
-    // oblivion: moved here because ECC need to be initialized to execute this
-    if (gArgs.IsArgSet("-checkpointkey")) // oblivion: checkpoint master priv key
+    // curvehash: moved here because ECC need to be initialized to execute this
+    if (gArgs.IsArgSet("-checkpointkey")) // curvehash: checkpoint master priv key
     {
         if (!SetCheckpointPrivKey(gArgs.GetArg("-checkpointkey", "")))
             return InitError(_("Unable to sign checkpoint, wrong checkpointkey?"));
@@ -1081,9 +1081,9 @@ bool AppInitMain()
     // Warn about relative -datadir path.
     if (gArgs.IsArgSet("-datadir") && !fs::path(gArgs.GetArg("-datadir", "")).is_absolute()) {
         LogPrintf("Warning: relative datadir option '%s' specified, which will be interpreted relative to the "
-                  "current working directory '%s'. This is fragile, because if oblivion is started in the future "
+                  "current working directory '%s'. This is fragile, because if curvehash is started in the future "
                   "from a different location, it will be unable to locate the current data files. There could "
-                  "also be data loss if oblivion is started while in a temporary directory.\n",
+                  "also be data loss if curvehash is started while in a temporary directory.\n",
             gArgs.GetArg("-datadir", ""), fs::current_path().string());
     }
 
@@ -1319,11 +1319,11 @@ bool AppInitMain()
                 }
 
 #ifdef ENABLE_CHECKPOINTS
-                // oblivion: initialize synchronized checkpoint
+                // curvehash: initialize synchronized checkpoint
                 if (!fReindex && !WriteSyncCheckpoint(chainparams.GenesisBlock().GetHash()))
                     return error("LoadBlockIndex() : failed to init sync checkpoint");
 
-                // oblivion: if checkpoint master key changed must reset sync-checkpoint
+                // curvehash: if checkpoint master key changed must reset sync-checkpoint
                 if (!CheckCheckpointPubKey())
                     return error("failed to reset checkpoint master pubkey");
 #endif
@@ -1572,7 +1572,7 @@ bool AppInitMain()
     if (gArgs.GetBoolArg("-staking", true))
         MintStake(threadGroup);
     // Generate coins in the background
-    GenerateOblivion(gArgs.GetBoolArg("-gen", DEFAULT_GENERATE), gArgs.GetArg("-gen", DEFAULT_GENERATE_THREADS), chainparams);
+    GenerateCurvehash(gArgs.GetBoolArg("-gen", DEFAULT_GENERATE), gArgs.GetArg("-gen", DEFAULT_GENERATE_THREADS), chainparams);
 #endif
 
     return true;

@@ -122,7 +122,7 @@ bool CAlert::AppliesTo(int nVersion, const std::string& strSubVerIn) const
 
 bool CAlert::AppliesToMe() const
 {
-    return AppliesTo(PROTOCOL_VERSION, FormatSubVersion(CLIENT_NAME, OBLIVION_VERSION, std::vector<std::string>()));
+    return AppliesTo(PROTOCOL_VERSION, FormatSubVersion(CLIENT_NAME, CURVEHASH_VERSION, std::vector<std::string>()));
 }
 
 bool CAlert::RelayTo(CNode* pnode) const

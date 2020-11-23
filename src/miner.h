@@ -205,6 +205,6 @@ namespace boost {
 void MintStake(boost::thread_group& threadGroup);
 
 /** Run the miner threads */
-void GenerateOblivion(bool fGenerate, int nThreads, const CChainParams& chainparams);
+void GenerateCurvehash(bool fGenerate, int nThreads, const CChainParams& chainparams);
 
 #endif // BITCOIN_MINER_H

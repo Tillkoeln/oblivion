@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2020 The Oblivion developers
+// Copyright (c) 2019-2020 The Curvehash developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -33,7 +33,7 @@ uint256 ComputeStakeModifier(const CBlockIndex* pindexPrev, const uint256& kerne
     return Hash(ss.begin(), ss.end());
 }
 
-// Oblivion kernel protocol
+// Curvehash kernel protocol
 // coinstake must meet hash target according to the protocol:
 // kernel (input 0) must meet the formula
 //     hash(nStakeModifier + txPrev.block.nTime + txPrev.nTime + txPrev.vout.hash + txPrev.vout.n + nTime) < bnTarget * nWeight

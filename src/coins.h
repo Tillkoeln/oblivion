@@ -38,10 +38,10 @@ public:
     //! at which height this containing transaction was included in the active block chain
     uint32_t nHeight : 31;
 
-    // oblivion: whether transaction is a coinstake
+    // curvehash: whether transaction is a coinstake
     bool fCoinStake;
 
-    // oblivion: transaction timestamp
+    // curvehash: transaction timestamp
     unsigned int nTime;
 
     //! construct a Coin from a CTxOut and height/coinbase information.
@@ -65,7 +65,7 @@ public:
         return fCoinBase;
     }
 
-    bool IsCoinStake() const { // oblivion: coinstake
+    bool IsCoinStake() const { // curvehash: coinstake
         return fCoinStake;
     }
 
@@ -75,10 +75,10 @@ public:
         uint32_t code = nHeight * 2 + fCoinBase;
         ::Serialize(s, VARINT(code));
         ::Serialize(s, CTxOutCompressor(REF(out)));
-        // oblivion flags
+        // curvehash flags
         unsigned int nFlag = fCoinStake? 1 : 0;
         ::Serialize(s, VARINT(nFlag));
-        // oblivion transaction timestamp
+        // curvehash transaction timestamp
         ::Serialize(s, VARINT(nTime));
     }
 
@@ -89,11 +89,11 @@ public:
         nHeight = code >> 1;
         fCoinBase = code & 1;
         ::Unserialize(s, REF(CTxOutCompressor(out)));
-        // oblivion flags
+        // curvehash flags
         unsigned int nFlag = 0;
         ::Unserialize(s, VARINT(nFlag));
         fCoinStake = nFlag & 1;
-        // oblivion transaction timestamp
+        // curvehash transaction timestamp
         ::Unserialize(s, VARINT(nTime));
     }
 

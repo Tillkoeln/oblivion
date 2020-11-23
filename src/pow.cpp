@@ -1,6 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2017 The Bitcoin Core developers
-// Copyright (c) 2019-2020 The Oblivion developers
+// Copyright (c) 2019-2020 The Curvehash developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -16,7 +16,7 @@
 #include <chainparams.h>
 #include <util.h>
 
-// oblivion: find last block index up to pindex
+// curvehash: find last block index up to pindex
 const CBlockIndex *GetLastBlockIndex(const CBlockIndex *pindex, bool fProofOfStake) {
     while (pindex && pindex->pprev && (pindex->IsProofOfStake() != fProofOfStake))
         pindex = pindex->pprev;

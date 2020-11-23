@@ -88,7 +88,7 @@ std::string strSubVersion;
 
 limitedmap<uint256, int64_t> mapAlreadyAskedFor(MAX_INV_SZ);
 
-// oblivion: temperature to measure how many PoS headers have been sent by this client
+// curvehash: temperature to measure how many PoS headers have been sent by this client
 std::map<CNetAddr, int32_t> mapPoSTemperature;
 
 extern void UpdateNumPeers(int num_peers);
@@ -1218,8 +1218,8 @@ void CConnman::ThreadSocketHandler()
             nPrevNodeCount = vNodesSize;
             if(clientInterface)
                 clientInterface->NotifyNumConnectionsChanged(nPrevNodeCount);
-            UpdateNumPeers(vNodesSize);
         }
+
         //
         // Find which sockets have data to receive
         //
@@ -1513,7 +1513,7 @@ void ThreadMapPort()
             }
         }
 
-        std::string strDesc = "Oblivion " + FormatFullVersion();
+        std::string strDesc = "Curvehash " + FormatFullVersion();
 
         try {
             while (true) {

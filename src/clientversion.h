@@ -14,7 +14,7 @@
 #error Client version information missing: version is not defined by bitcoin-config.h or in any other way
 #endif
 
-#if !defined(OBLIVION_VERSION_MAJOR) || !defined(OBLIVION_VERSION_MINOR) || !defined(OBLIVION_VERSION_REVISION) || !defined(OBLIVION_VERSION_BUILD)
+#if !defined(CURVEHASH_VERSION_MAJOR) || !defined(CURVEHASH_VERSION_MINOR) || !defined(CURVEHASH_VERSION_REVISION) || !defined(CURVEHASH_VERSION_BUILD)
 #error Client version information missing: version is not defined by bitcoin-config.h or in any other way
 #endif
 
@@ -45,12 +45,12 @@ static const int CLIENT_VERSION =
                          +     100 * CLIENT_VERSION_REVISION
                          +       1 * CLIENT_VERSION_BUILD;
 
-// note: oblivion version is used for display purpose AND to accept alerts
-static const int OBLIVION_VERSION =
-                           1000000 * OBLIVION_VERSION_MAJOR
-                         +   10000 * OBLIVION_VERSION_MINOR
-                         +     100 * OBLIVION_VERSION_REVISION
-                         +       1 * OBLIVION_VERSION_BUILD;
+// note: curvehash version is used for display purpose AND to accept alerts
+static const int CURVEHASH_VERSION =
+                           1000000 * CURVEHASH_VERSION_MAJOR
+                         +   10000 * CURVEHASH_VERSION_MINOR
+                         +     100 * CURVEHASH_VERSION_REVISION
+                         +       1 * CURVEHASH_VERSION_BUILD;
 
 extern const std::string CLIENT_NAME;
 extern const std::string CLIENT_BUILD;

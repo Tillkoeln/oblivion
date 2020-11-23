@@ -1,6 +1,6 @@
 // Copyright (c) 2013-2017 The Bitcoin Core developers
 // Copyright (c) 2017-2019 The Peercoin developers
-// Copyright (c) 2019-2020 The Oblivion developers
+// Copyright (c) 2019-2020 The Curvehash developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -249,11 +249,11 @@ uint64_t SipHashUint256Extra(uint64_t k0, uint64_t k1, const uint256& val, uint3
     return v0 ^ v1 ^ v2 ^ v3;
 }
 
-int32_t oblivionRandseed;
+int32_t curvehashRandseed;
 int univHash(const uint256 &x) {
-  int h = oblivionRandseed >> 20;
+  int h = curvehashRandseed >> 20;
   const uint32_t *p = x.GetDataPtr();
   for(int i = 0; i < 8; i++)
-    h ^=  (p[i] >> (h & 0xf)) + (oblivionRandseed >> i);
+    h ^=  (p[i] >> (h & 0xf)) + (curvehashRandseed >> i);
   return (h + (h >> 16))  & 1023; // 2^n - 1
 }

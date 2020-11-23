@@ -1,8 +1,8 @@
-// Copyright (c) 2019-2020 The Oblivion developers
+// Copyright (c) 2019-2020 The Curvehash developers
 // Distributed under conditional MIT/X11 open source software license
 // see the accompanying file COPYING
-#ifndef OBLIVION_CHECKPOINTSYNC_H
-#define OBLIVION_CHECKPOINTSYNC_H
+#ifndef CURVEHASH_CHECKPOINTSYNC_H
+#define CURVEHASH_CHECKPOINTSYNC_H
 
 #define CHECKPOINT_MAX_SPAN (60 * 60 * 4) // max 4 hours before latest block
 
@@ -126,4 +126,4 @@ public:
     bool ProcessSyncCheckpoint(CNode* pfrom);
 };
 
-#endif // OBLIVION_CHECKPOINTSYNC_H
+#endif // CURVEHASH_CHECKPOINTSYNC_H

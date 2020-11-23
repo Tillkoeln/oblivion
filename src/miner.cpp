@@ -84,7 +84,7 @@ void BlockAssembler::resetBlock() {
     nFees = 0;
 }
 
-// oblivion: if pwallet != NULL it will attempt to create coinstake
+// curvehash: if pwallet != NULL it will attempt to create coinstake
 std::unique_ptr <CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript &scriptPubKeyIn, bool fMineWitnessTx, CWallet *pwallet, bool *pfPoSCancel) {
     int64_t nTimeStart = GetTimeMicros();
 
@@ -120,7 +120,7 @@ std::unique_ptr <CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript &s
     pblocktemplate->vTxFees.push_back(-1); // updated at end
     pblocktemplate->vTxSigOpsCost.push_back(-1); // updated at end
 
-    // oblivion: if coinstake available add coinstake tx
+    // curvehash: if coinstake available add coinstake tx
     static int64_t nLastCoinStakeSearchTime = GetAdjustedTime();  // only initialized at startup
 
     if (pwallet)  // attemp to find a coinstake
@@ -145,7 +145,7 @@ std::unique_ptr <CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript &s
             nLastCoinStakeSearchTime = nSearchTime;
         }
         if (*pfPoSCancel)
-            return nullptr; // oblivion: there is no point to continue if we failed to create coinstake
+            return nullptr; // curvehash: there is no point to continue if we failed to create coinstake
     }
 
     LOCK(mempool.cs);
@@ -241,7 +241,7 @@ bool BlockAssembler::TestPackageTransactions(const CTxMemPool::setEntries &packa
         if (!fIncludeWitness && it->GetTx().HasWitness())
             return false;
 
-        // oblivion: timestamp limit
+        // curvehash: timestamp limit
         if (it->GetTx().nTime > GetAdjustedTime() || (pblock->IsProofOfStake() && it->GetTx().nTime > pblock->vtx[1]->nTime))
             return false;
     }
@@ -473,7 +473,7 @@ static bool ProcessBlockFound(const CBlock *pblock, const CChainParams &chainpar
     {
 //        LOCK(cs_main);
         if (pblock->hashPrevBlock != chainActive.Tip()->GetBlockHash())
-            return error("OblivionMiner: generated block is stale");
+            return error("CurvehashMiner: generated block is stale");
     }
 
     // Process this block the same as if we had received it from another node
@@ -486,11 +486,9 @@ static bool ProcessBlockFound(const CBlock *pblock, const CChainParams &chainpar
 
 void PoSMiner(CWallet *pwallet) {
     LogPrintf("PoSMiner started for proof-of-stake\n");
-    RenameThread("oblivion-stake-minter");
+    RenameThread("curvehash-stake-minter");
 
     unsigned int nExtraNonce = 0;
-    int nBestHeight; // TODO: set from new block signal?
-    int64_t nBestTime;
 
     std::shared_ptr <CReserveScript> coinbaseScript;
     pwallet->GetScriptForMining(coinbaseScript);
@@ -524,58 +522,23 @@ void PoSMiner(CWallet *pwallet) {
             throw std::runtime_error("No coinbase script available (mining requires a wallet)");
 
         while (true) {
-            if (pwallet->IsLocked()) {
-                LogPrint(BCLog::POS, "wallet is locked\n");
+            while (pwallet->IsLocked()) {
+                LogPrintf("wallet is locked\n");
                 strMintWarning = strMintMessage;
                 MilliSleep(5000);
-                continue;
-            }
-            if (GuessVerificationProgress(Params().TxData(), chainActive.Tip()) < 0.996) {
-                LogPrint(BCLog::POS, "Minter thread sleeps while sync at %f\n", GuessVerificationProgress(Params().TxData(), chainActive.Tip()));
-                strMintWarning = strMintSyncMessage;
-                MilliSleep(10000);
-                continue;
             }
             unsigned int nMiningRequiresPeers = Params().MiningRequiresPeers();
-            int num_blocks_of_peers, num_nodes;
-            {
-                LOCK(cs_main);
-                nBestHeight = chainActive.Tip()->nHeight;
-                nBestTime = chainActive.Tip()->nTime;
-                num_blocks_of_peers = GetNumBlocksOfPeers();
-                num_nodes = GetNumPeers();
-            }
-            LogPrint(BCLog::POS, "nBestHeight: %d, nBestTime: %d, num_blocks_of_peers: %d, num_nodes: %d", nBestHeight, nBestTime, num_blocks_of_peers, num_nodes);
-
-            if (nBestHeight >= Params().GetConsensus().stakeStopHeight && chainActive.Tip()->pprev->nPOWBlockHeight + 5 <= Params().GetConsensus().nTotalPOWBlock) {
-                LogPrint(BCLog::POS, "%s: PoS is temporary stopped\n", __func__);
-                continue;
-            }
-            if (num_nodes == 0 || IsInitialBlockDownload()) {
-                LogPrint(BCLog::POS, "%s: IsInitialBlockDownload\n", __func__);
-                MilliSleep(2 * 1000);
-                continue;
-            }
-
-            if (num_nodes < nMiningRequiresPeers || nBestHeight < num_blocks_of_peers) {
-                LogPrint(BCLog::POS, "%s: TryToSync\n", __func__);
-                MilliSleep(30 * 1000);
-                continue;
-            }
-
             if (nMiningRequiresPeers > 0) {
                 // Busy-wait for the network to come online so we don't waste time mining
                 // on an obsolete chain. In regtest mode we expect to fly solo.
                 while (g_connman == nullptr || g_connman->GetNodeCount(CConnman::CONNECTIONS_ALL) < nMiningRequiresPeers || IsInitialBlockDownload())
                     MilliSleep(5 * 1000);
             }
-
-            if (nBestHeight < num_blocks_of_peers - 1) {
-                LogPrint(BCLog::POS, "%s: nBestHeight < GetNumBlocksOfPeers(), %d, %d\n", __func__, nBestHeight, num_blocks_of_peers);
-                MilliSleep(5 * 1000);
-                continue;
+            while (GuessVerificationProgress(Params().TxData(), chainActive.Tip()) < 0.996) {
+                LogPrintf("Minter thread sleeps while sync at %f\n", GuessVerificationProgress(Params().TxData(), chainActive.Tip()));
+                strMintWarning = strMintSyncMessage;
+                MilliSleep(10000);
             }
-
 
             strMintWarning = strMintEmpty;
 
@@ -597,7 +560,7 @@ void PoSMiner(CWallet *pwallet) {
             CBlock *pblock = &pblocktemplate->block;
             IncrementExtraNonce(pblock, pindexPrev, nExtraNonce);
 
-            // oblivion: if proof-of-stake block found then process block
+            // curvehash: if proof-of-stake block found then process block
             if (pblock->IsProofOfStake()) {
                 pblock->nFlags = CBlockIndex::BLOCK_PROOF_OF_STAKE;
                 if (!SignBlock(*pblock, *pwallet)) {
@@ -625,7 +588,7 @@ void PoSMiner(CWallet *pwallet) {
     }
 }
 
-// oblivion: stake minter thread
+// curvehash: stake minter thread
 void static ThreadStakeMinter(void *parg) {
     LogPrintf("ThreadStakeMinter started\n");
     CWallet *pwallet = (CWallet *) parg;
@@ -640,9 +603,9 @@ void static ThreadStakeMinter(void *parg) {
     LogPrintf("ThreadStakeMinter exiting\n");
 }
 
-// oblivion: stake minter
+// curvehash: stake minter
 void MintStake(boost::thread_group &threadGroup) {
-    // oblivion: mint proof-of-stake blocks in the background
+    // curvehash: mint proof-of-stake blocks in the background
     if (!vpwallets.empty())
         threadGroup.create_thread(boost::bind(&ThreadStakeMinter, vpwallets[0]));
 }
@@ -677,9 +640,9 @@ bool static ScanHash(const CBlockHeader *pblock, uint32_t &nNonce, uint256 *phas
     }
 }
 
-void static OblivionMiner(const CChainParams &chainparams, void *parg) {
-    LogPrintf("OblivionMiner started\n");
-    RenameThread("oblivion-miner");
+void static CurvehashMiner(const CChainParams &chainparams, void *parg) {
+    LogPrintf("CurvehashMiner started\n");
+    RenameThread("curvehash-miner");
     CWallet *pwallet = (CWallet *) parg;
 
     unsigned int nExtraNonce = 0;
@@ -719,20 +682,20 @@ void static OblivionMiner(const CChainParams &chainparams, void *parg) {
             //
             nTransactionsUpdatedLast = mempool.GetTransactionsUpdated();
             CBlockIndex *pindexPrev = chainActive.Tip();
-            if (pindexPrev->nPOWBlockHeight >= Params().GetConsensus().nTotalPOWBlock) {
-                LogPrintf("POW ENDED, Stop mining!");
-                break;
-            }
+          //  if (pindexPrev->nPOWBlockHeight >= Params().GetConsensus().nTotalPOWBlock) {
+            //    LogPrintf("POW ENDED, Stop mining!");
+              //  break;
+          //  }
 
             std::unique_ptr <CBlockTemplate> pblocktemplate(BlockAssembler(Params()).CreateNewBlock(coinbaseScript->reserveScript, true, nullptr, nullptr));
             if (!pblocktemplate.get()) {
-                LogPrintf("Error in OblivionMiner: Keypool ran out, please call keypoolrefill before restarting the mining hread\n");
+                LogPrintf("Error in CurvehashMiner: Keypool ran out, please call keypoolrefill before restarting the mining hread\n");
                 return;
             }
             CBlock *pblock = &pblocktemplate->block;
             IncrementExtraNonce(pblock, pindexPrev, nExtraNonce);
 
-            LogPrintf("Running OblivionMiner with %u transactions in block (%u bytes)\n", pblock->vtx.size(),
+            LogPrintf("Running CurvehashMiner with %u transactions in block (%u bytes)\n", pblock->vtx.size(),
                       ::GetSerializeSize(*pblock, SER_NETWORK, PROTOCOL_VERSION));
 
             //
@@ -752,7 +715,7 @@ void static OblivionMiner(const CChainParams &chainparams, void *parg) {
 
 //                        LOCK2(cs_main, pwallet->cs_wallet);
                         if (!SignBlock(*pblock, *pwallet)) {
-                            LogPrintf("OblivionMiner(): failed to sign PoS block");
+                            LogPrintf("CurvehashMiner(): failed to sign PoS block");
                             continue;
                         }
 
@@ -793,16 +756,16 @@ void static OblivionMiner(const CChainParams &chainparams, void *parg) {
         throw boost::thread_interrupted();
     }
     catch (const boost::thread_interrupted &e) {
-        LogPrintf("OblivionMiner terminated!\n");
+        LogPrintf("CurvehashMiner terminated!\n");
         throw;
     }
     catch (const std::runtime_error &e) {
-        LogPrintf("OblivionMiner runtime error: %s\n", e.what());
+        LogPrintf("CurvehashMiner runtime error: %s\n", e.what());
         return;
     }
 }
 
-void GenerateOblivion(bool fGenerate, int nThreads, const CChainParams &chainparams) {
+void GenerateCurvehash(bool fGenerate, int nThreads, const CChainParams &chainparams) {
     static boost::thread_group *minerThreads = NULL;
 
     if (nThreads < 0)
@@ -820,7 +783,6 @@ void GenerateOblivion(bool fGenerate, int nThreads, const CChainParams &chainpar
     minerThreads = new boost::thread_group();
     if (!vpwallets.empty()) {
         for (int i = 0; i < nThreads; i++)
-            minerThreads->create_thread(boost::bind(&OblivionMiner, boost::cref(chainparams), vpwallets[0]));
+            minerThreads->create_thread(boost::bind(&CurvehashMiner, boost::cref(chainparams), vpwallets[0]));
     }
 }
-

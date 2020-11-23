@@ -1,9 +1,9 @@
 // Copyright (c) 2017-2019 The Peercoin developers
-// Copyright (c) 2019-2020 The Oblivion developers
+// Copyright (c) 2019-2020 The Curvehash developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
-#ifndef OBLIVION_KERNEL_H
-#define OBLIVION_KERNEL_H
+#ifndef CURVEHASH_KERNEL_H
+#define CURVEHASH_KERNEL_H
 
 #include <primitives/transaction.h> // CTransaction(Ref)
 
@@ -37,4 +37,4 @@ bool CheckCoinStakeTimestamp(int64_t nTimeBlock, int64_t nTimeTx);
  */
 bool CheckKernel(unsigned int nBits, CBlockIndex *pindexPrev, const CBlockHeader& blockFrom, const CTransactionRef& txPrev, const COutPoint& prevout, unsigned int nTime);
 
-#endif // OBLIVION_KERNEL_H
+#endif // CURVEHASH_KERNEL_H

@@ -36,7 +36,7 @@ if ENABLE_ZMQ
 LIBBITCOIN_ZMQ=libbitcoin_zmq.a
 endif
 if BUILD_BITCOIN_LIBS
-LIBBITCOINCONSENSUS=liboblivionconsensus.la
+LIBBITCOINCONSENSUS=libcurvehashconsensus.la
 endif
 if ENABLE_WALLET
 LIBBITCOIN_WALLET=libbitcoin_wallet.a
@@ -65,11 +65,11 @@ TESTS =
 BENCHMARKS =
 
 if BUILD_BITCOIND
-  bin_PROGRAMS += obliviond
+  bin_PROGRAMS += curvehashd
 endif
 
 if BUILD_BITCOIN_UTILS
-  bin_PROGRAMS += oblivion-cli oblivion-tx
+  bin_PROGRAMS += curvehash-cli curvehash-tx
 endif
 
 .PHONY: FORCE check-symbols check-security
@@ -244,7 +244,7 @@ libbitcoin_zmq_a_SOURCES = \
 endif
 
 
-# wallet: shared between obliviond and oblivion-qt, but only linked
+# wallet: shared between curvehashd and curvehash-qt, but only linked
 # when wallet enabled
 libbitcoin_wallet_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 libbitcoin_wallet_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
@@ -321,7 +321,7 @@ libbitcoin_consensus_a_SOURCES = \
   utilstrencodings.h \
   version.h
 
-# common: shared between obliviond, and oblivion-qt and non-server tools
+# common: shared between curvehashd, and curvehash-qt and non-server tools
 libbitcoin_common_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 libbitcoin_common_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_common_a_SOURCES = \
@@ -374,7 +374,7 @@ if GLIBC_BACK_COMPAT
 libbitcoin_util_a_SOURCES += compat/glibc_compat.cpp
 endif
 
-# cli: shared between oblivion-cli and oblivion-qt
+# cli: shared between curvehash-cli and curvehash-qt
 libbitcoin_cli_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 libbitcoin_cli_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_cli_a_SOURCES = \
@@ -384,17 +384,17 @@ libbitcoin_cli_a_SOURCES = \
 nodist_libbitcoin_util_a_SOURCES = $(srcdir)/obj/build.h
 #
 
-# obliviond binary #
-obliviond_SOURCES = bitcoind.cpp
-obliviond_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
-obliviond_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-obliviond_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+# curvehashd binary #
+curvehashd_SOURCES = bitcoind.cpp
+curvehashd_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+curvehashd_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+curvehashd_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
 if TARGET_WINDOWS
-obliviond_SOURCES += bitcoind-res.rc
+curvehashd_SOURCES += bitcoind-res.rc
 endif
 
-obliviond_LDADD = \
+curvehashd_LDADD = \
   $(LIBBITCOIN_SERVER) \
   $(LIBBITCOIN_COMMON) \
   $(LIBUNIVALUE) \
@@ -408,40 +408,40 @@ obliviond_LDADD = \
   $(LIBMEMENV) \
   $(LIBSECP256K1)
 
-obliviond_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(ZMQ_LIBS)
+curvehashd_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(ZMQ_LIBS)
 
-# oblivion-cli binary #
-oblivion_cli_SOURCES = bitcoin-cli.cpp
-oblivion_cli_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(EVENT_CFLAGS)
-oblivion_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-oblivion_cli_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+# curvehash-cli binary #
+curvehash_cli_SOURCES = bitcoin-cli.cpp
+curvehash_cli_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(EVENT_CFLAGS)
+curvehash_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+curvehash_cli_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
 if TARGET_WINDOWS
-oblivion_cli_SOURCES += bitcoin-cli-res.rc
+curvehash_cli_SOURCES += bitcoin-cli-res.rc
 endif
 
-oblivion_cli_LDADD = \
+curvehash_cli_LDADD = \
   $(LIBBITCOIN_CLI) \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_UTIL) \
   $(LIBBITCOIN_CRYPTO)
 
-oblivion_cli_LDADD += $(BOOST_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS)
+curvehash_cli_LDADD += $(BOOST_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS)
 #
 
-# oblivion-tx binary #
-oblivion_tx_SOURCES = \
+# curvehash-tx binary #
+curvehash_tx_SOURCES = \
   bitcoin-tx.cpp \
   timedatadummy.cpp
-oblivion_tx_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
-oblivion_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-oblivion_tx_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+curvehash_tx_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+curvehash_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+curvehash_tx_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
 if TARGET_WINDOWS
-oblivion_tx_SOURCES += bitcoin-tx-res.rc
+curvehash_tx_SOURCES += bitcoin-tx-res.rc
 endif
 
-oblivion_tx_LDADD = \
+curvehash_tx_LDADD = \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_COMMON) \
   $(LIBBITCOIN_UTIL) \
@@ -449,22 +449,22 @@ oblivion_tx_LDADD = \
   $(LIBBITCOIN_CRYPTO) \
   $(LIBSECP256K1)
 
-oblivion_tx_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS)
+curvehash_tx_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS)
 #
 
-# oblivionconsensus library #
+# curvehashconsensus library #
 if BUILD_BITCOIN_LIBS
 include_HEADERS = script/bitcoinconsensus.h
-liboblivionconsensus_la_SOURCES = $(crypto_libbitcoin_crypto_a_SOURCES) $(libbitcoin_consensus_a_SOURCES)
+libcurvehashconsensus_la_SOURCES = $(crypto_libbitcoin_crypto_a_SOURCES) $(libbitcoin_consensus_a_SOURCES)
 
 if GLIBC_BACK_COMPAT
-  liboblivionconsensus_la_SOURCES += compat/glibc_compat.cpp
+  libcurvehashconsensus_la_SOURCES += compat/glibc_compat.cpp
 endif
 
-liboblivionconsensus_la_LDFLAGS = $(AM_LDFLAGS) -no-undefined $(RELDFLAGS)
-liboblivionconsensus_la_LIBADD = $(LIBSECP256K1)
-liboblivionconsensus_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(builddir)/obj -I$(srcdir)/secp256k1/include -DBUILD_BITCOIN_INTERNAL
-liboblivionconsensus_la_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+libcurvehashconsensus_la_LDFLAGS = $(AM_LDFLAGS) -no-undefined $(RELDFLAGS)
+libcurvehashconsensus_la_LIBADD = $(LIBSECP256K1)
+libcurvehashconsensus_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(builddir)/obj -I$(srcdir)/secp256k1/include -DBUILD_BITCOIN_INTERNAL
+libcurvehashconsensus_la_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 
 endif
 #

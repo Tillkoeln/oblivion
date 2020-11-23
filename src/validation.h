@@ -123,7 +123,7 @@ static const int64_t MAX_FEE_ESTIMATION_TIP_AGE = 3 * 60 * 60;
 /** Default for -permitbaremultisig */
 static const bool DEFAULT_PERMIT_BAREMULTISIG = true;
 static const bool DEFAULT_CHECKPOINTS_ENABLED = true;
-static const bool DEFAULT_TXINDEX = true;  // oblivion: txindex is required for PoS calculations (might change in the future)
+static const bool DEFAULT_TXINDEX = true;  // curvehash: txindex is required for PoS calculations (might change in the future)
 static const unsigned int DEFAULT_BANSCORE_THRESHOLD = 100;
 /** Default for -persistmempool */
 static const bool DEFAULT_PERSIST_MEMPOOL = true;
@@ -458,12 +458,12 @@ bool DumpMempool();
 /** Load the mempool from disk. */
 bool LoadMempool();
 
-// oblivion:
+// curvehash:
 CAmount GetProofOfWorkReward(unsigned int nHeight);
 CAmount GetProofOfStakeReward(CAmount nCoinAge);
 bool IsConfirmedInNPrevBlocks(const uint256 &hashBlock, const CBlockIndex *pindexFrom, int nMaxDepth, int &nActualDepth);
 bool CheckAge(const CBlockIndex *pindexTip, const uint256 &hashKernelBlock, int &nDepth);
-bool GetCoinAge(const CTransaction& tx, const CCoinsViewCache &view, const CBlockIndex* pindexPrev, uint64_t& nCoinAge, int nDepth = -1); // oblivion: get transaction coin age
+bool GetCoinAge(const CTransaction& tx, const CCoinsViewCache &view, const CBlockIndex* pindexPrev, uint64_t& nCoinAge, int nDepth = -1); // curvehash: get transaction coin age
 bool SignBlock(CBlock& block, const CKeyStore& keystore);
 bool CheckBlockSignature(const CBlock& block);
 /** Return the median number of blocks that other nodes claim to have */

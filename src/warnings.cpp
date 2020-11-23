@@ -58,7 +58,7 @@ std::string GetWarnings(const std::string& strFor)
     if (gArgs.GetBoolArg("-testsafemode", DEFAULT_TESTSAFEMODE))
         strStatusBar = strRPC = strGUI = "testsafemode enabled";
 
-    // oblivion: wallet lock warning for staking
+    // curvehash: wallet lock warning for staking
     if (strMintWarning != "")
     {
         nPriority = 0;
@@ -67,7 +67,7 @@ std::string GetWarnings(const std::string& strFor)
     }
 
 #ifdef ENABLE_CHECKPOINTS
-    // oblivion: checkpoint warning
+    // curvehash: checkpoint warning
     // should not enter safe mode for longer invalid chain
     if (strCheckpointWarning != "")
     {
@@ -98,7 +98,7 @@ std::string GetWarnings(const std::string& strFor)
         strGUI += (strGUI.empty() ? "" : uiAlertSeperator) + _("Warning: We do not appear to fully agree with our peers! You may need to upgrade, or other nodes may need to upgrade.");
     }
 #ifdef ENABLE_CHECKPOINTS
-    // oblivion: detect invalid checkpoint
+    // curvehash: detect invalid checkpoint
     if (hashInvalidCheckpoint != uint256())
     {
         nPriority = 3000;

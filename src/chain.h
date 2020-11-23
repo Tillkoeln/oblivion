@@ -221,13 +221,13 @@ public:
     //! (memory only) Maximum nTime in the chain up to and including this block.
     unsigned int nTimeMax;
 
-    // oblivion: money supply related block index fields
+    // curvehash: money supply related block index fields
     int64_t nMint;
     int64_t nMoneySupply;
     int nPOWBlockHeight;
 
-    // oblivion: proof-of-stake related block index fields
-    unsigned int nFlags;  // oblivion: block index flags
+    // curvehash: proof-of-stake related block index fields
+    unsigned int nFlags;  // curvehash: block index flags
     enum
     {
         BLOCK_PROOF_OF_STAKE = (1 << 0), // is proof-of-stake block
@@ -254,7 +254,7 @@ public:
         nFlags |= BLOCK_PROOF_OF_STAKE;
     }
 
-// oblivion end
+// curvehash end
 
     void SetNull()
     {
@@ -278,7 +278,7 @@ public:
         nBits          = 0;
         nNonce         = 0;
 
-        // oblivion:
+        // curvehash:
         nMint = 0;
         nMoneySupply = 0;
         nPOWBlockHeight = 0;

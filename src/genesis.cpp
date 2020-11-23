@@ -1,6 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2017 The Bitcoin Core developers
-// Copyright (c) 2019-2020 The Oblivion developers
+// Copyright (c) 2019-2020 The Curvehash developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -11,6 +11,7 @@
 #include <consensus/merkle.h>
 #include <primitives/block.h>
 #include <uint256.h>
+#include <utilstrencodings.h>
 
 #include <bignum.h>
 #include <util.h>
@@ -44,7 +45,7 @@ CBlock CreateGenesisBlock(const char *pszTimestamp, const CScript &genesisOutput
     txNew.vout.resize(1);
     txNew.vin[0].scriptSig =
             CScript() << 486604799 << CScriptNum(9999) << std::vector<unsigned char>((const unsigned char *) pszTimestamp, (const unsigned char *) pszTimestamp + strlen(pszTimestamp));
-    txNew.vout[0].nValue = genesisReward;
+    txNew.vout[0].nValue = 1369000 * COIN;
     txNew.vout[0].scriptPubKey = genesisOutputScript;
     txNew.nTime = nTimeTx;
 
@@ -71,8 +72,8 @@ CBlock CreateGenesisBlock(const char *pszTimestamp, const CScript &genesisOutput
  *   vMerkleTree: 4a5e1e
  */
 CBlock CreateGenesisBlock(uint32_t nTimeBlock, uint32_t nNonce, uint32_t nBits, int32_t nVersion, const CAmount &genesisReward) {
-    const char *pszTimestamp = "BTC 00000000000000000001449acb615e7216e0b4619b1740eac7633edccef88b85";
-    const CScript genesisOutputScript = CScript();
+    const char *pszTimestamp = "The Coronavirus Outbreak";
+    const CScript genesisOutputScript = CScript() << ParseHex("04a60e7c8cd218fec9bf9565b04bd0d973608ec257c13d74ca7ee54243f18328175ef4be91f30fa747d4e358771cd0094306d08c22a7c6a55fa35915aa263c8db1") << OP_CHECKSIG;
     return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTimeBlock - 3600, nTimeBlock, nNonce, nBits, nVersion, genesisReward);
 }
 

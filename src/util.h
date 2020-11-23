@@ -318,7 +318,7 @@ void RenameThread(const char* name);
  */
 template <typename Callable> void TraceThread(const char* name,  Callable func)
 {
-    std::string s = strprintf("oblivion-%s", name);
+    std::string s = strprintf("curvehash-%s", name);
     RenameThread(s.c_str());
     try
     {

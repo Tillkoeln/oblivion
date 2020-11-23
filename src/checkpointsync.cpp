@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2020 The Oblivion developers
+// Copyright (c) 2019-2020 The Curvehash developers
 // Distributed under conditional MIT/X11 software license,
 // see the accompanying file COPYING
 //
@@ -69,7 +69,7 @@ const std::string CSyncCheckpoint::strTestPubKey = "046cad3d8254b182a4e5289d01d1
 std::string CSyncCheckpoint::strMasterPrivKey = "";
 
 
-// oblivion: synchronized checkpoint (centrally broadcasted)
+// curvehash: synchronized checkpoint (centrally broadcasted)
 uint256 hashSyncCheckpoint = uint256();
 uint256 hashPendingCheckpoint = uint256();
 CSyncCheckpoint checkpointMessage;
@@ -78,7 +78,7 @@ uint256 hashInvalidCheckpoint = uint256();
 CCriticalSection cs_hashSyncCheckpoint;
 std::string strCheckpointWarning;
 
-// oblivion: get last synchronized checkpoint
+// curvehash: get last synchronized checkpoint
 CBlockIndex* GetLastSyncCheckpoint()
 {
     LOCK(cs_hashSyncCheckpoint);
@@ -89,7 +89,7 @@ CBlockIndex* GetLastSyncCheckpoint()
     return NULL;
 }
 
-// oblivion: only descendant of current sync-checkpoint is allowed
+// curvehash: only descendant of current sync-checkpoint is allowed
 bool ValidateSyncCheckpoint(uint256 hashCheckpoint)
 {
     if (!mapBlockIndex.count(hashSyncCheckpoint))
@@ -239,7 +239,7 @@ bool CheckSyncCheckpoint(const uint256& hashBlock, const CBlockIndex* pindexPrev
 //    return true;
 }
 
-// oblivion: reset synchronized checkpoint to last hardened checkpoint
+// curvehash: reset synchronized checkpoint to last hardened checkpoint
 bool ResetSyncCheckpoint()
 {
     LOCK(cs_hashSyncCheckpoint);
@@ -364,7 +364,7 @@ bool IsSyncCheckpointTooOld(unsigned int nSeconds)
     return (pindexSync->GetBlockTime() + nSeconds < GetAdjustedTime());
 }
 
-// oblivion: verify signature of sync-checkpoint message
+// curvehash: verify signature of sync-checkpoint message
 bool CSyncCheckpoint::CheckSignature()
 {
     std::string strMasterPubKey = Params().NetworkIDString() == CBaseChainParams::TESTNET ? CSyncCheckpoint::strTestPubKey : CSyncCheckpoint::strMainPubKey;
@@ -378,7 +378,7 @@ bool CSyncCheckpoint::CheckSignature()
     return true;
 }
 
-// oblivion: process synchronized checkpoint
+// curvehash: process synchronized checkpoint
 bool CSyncCheckpoint::ProcessSyncCheckpoint(CNode* pfrom)
 {
     if (!CheckSignature())

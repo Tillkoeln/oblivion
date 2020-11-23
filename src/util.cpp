@@ -82,8 +82,8 @@
 // Application startup time (used for uptime calculation)
 const int64_t nStartupTime = GetTime();
 
-const char * const BITCOIN_CONF_FILENAME = "oblivion.conf";
-const char * const BITCOIN_PID_FILENAME = "obliviond.pid";
+const char * const BITCOIN_CONF_FILENAME = "curvehash.conf";
+const char * const BITCOIN_PID_FILENAME = "curvehashd.pid";
 const char * const DEFAULT_DEBUGLOGFILE = "debug.log";
 
 ArgsManager gArgs;
@@ -561,7 +561,7 @@ static std::string FormatException(const std::exception* pex, const char* pszThr
     char pszModule[MAX_PATH] = "";
     GetModuleFileNameA(nullptr, pszModule, sizeof(pszModule));
 #else
-    const char* pszModule = "oblivion";
+    const char* pszModule = "curvehash";
 #endif
     if (pex)
         return strprintf(
@@ -580,13 +580,13 @@ void PrintExceptionContinue(const std::exception* pex, const char* pszThread)
 
 fs::path GetDefaultDataDir()
 {
-    // Windows < Vista: C:\Documents and Settings\Username\Application Data\Oblivion
-    // Windows >= Vista: C:\Users\Username\AppData\Roaming\Oblivion
-    // Mac: ~/Library/Application Support/Oblivion
-    // Unix: ~/.oblivion
+    // Windows < Vista: C:\Documents and Settings\Username\Application Data\Curvehash
+    // Windows >= Vista: C:\Users\Username\AppData\Roaming\Curvehash
+    // Mac: ~/Library/Application Support/Curvehash
+    // Unix: ~/.curvehash
 #ifdef WIN32
     // Windows
-    return GetSpecialFolderPath(CSIDL_APPDATA) / "Oblivion";
+    return GetSpecialFolderPath(CSIDL_APPDATA) / "Curvehash";
 #else
     fs::path pathRet;
     char* pszHome = getenv("HOME");
@@ -596,10 +596,10 @@ fs::path GetDefaultDataDir()
         pathRet = fs::path(pszHome);
 #ifdef MAC_OSX
     // Mac
-    return pathRet / "Library/Application Support/Oblivion";
+    return pathRet / "Library/Application Support/Curvehash";
 #else
     // Unix
-    return pathRet / ".oblivion";
+    return pathRet / ".curvehash";
 #endif
 #endif
 }

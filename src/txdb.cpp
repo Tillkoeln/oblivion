@@ -287,7 +287,7 @@ bool CBlockTreeDB::LoadBlockIndexGuts(const Consensus::Params& consensusParams, 
                 pindexNew->nStatus        = diskindex.nStatus;
                 pindexNew->nTx            = diskindex.nTx;
 
-                 // oblivion related block index fields
+                 // curvehash related block index fields
                 pindexNew->nMint          = diskindex.nMint;
                 pindexNew->nMoneySupply   = diskindex.nMoneySupply;
                 pindexNew->nPOWBlockHeight   = diskindex.nPOWBlockHeight;
@@ -329,10 +329,10 @@ public:
     //! at which height this transaction was included in the active block chain
     int nHeight;
 
-    // oblivion: whether transaction is a coinstake
+    // curvehash: whether transaction is a coinstake
     bool fCoinStake;
 
-    // oblivion: transaction timestamp
+    // curvehash: transaction timestamp
     unsigned int nTime;
 
     //! empty constructor
